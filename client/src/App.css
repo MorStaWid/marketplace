@@ -1,0 +1,290 @@
+/* Auth pages */
+.auth-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  background: linear-gradient(145deg, #2d5a3d 0%, #1e3d2a 100%);
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 400px;
+  background: #fff;
+  border-radius: 12px;
+  padding: 2rem;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+}
+
+.auth-card h1 {
+  margin: 0 0 1.5rem;
+  font-size: 1.75rem;
+  color: #1a1a1a;
+}
+
+.auth-card label {
+  display: block;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+  color: #444;
+}
+
+.auth-card input,
+.auth-card select {
+  display: block;
+  width: 100%;
+  margin-top: 0.35rem;
+  padding: 0.6rem 0.75rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+}
+
+.auth-card input:focus,
+.auth-card select:focus {
+  outline: none;
+  border-color: #2d5a3d;
+  box-shadow: 0 0 0 2px rgba(45, 90, 61, 0.2);
+}
+
+.auth-card button[type="submit"] {
+  width: 100%;
+  margin-top: 0.5rem;
+  padding: 0.75rem;
+  background: #2d5a3d;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+}
+
+.auth-card button[type="submit"]:hover:not(:disabled) {
+  background: #244a32;
+}
+
+.auth-card button[type="submit"]:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.auth-footer {
+  margin: 1.25rem 0 0;
+  font-size: 0.9rem;
+  color: #555;
+  text-align: center;
+}
+
+/* Page layout */
+.page {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 1.5rem;
+}
+
+.page-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #ddd;
+}
+
+.page-header h1 {
+  margin: 0;
+  font-size: 1.5rem;
+  color: #1a1a1a;
+}
+
+.page-header nav {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.page-header nav a,
+.btn-link {
+  color: #2d5a3d;
+  font-weight: 500;
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: 1rem;
+}
+
+.page-header nav a:hover,
+.btn-link:hover {
+  text-decoration: underline;
+}
+
+/* Cards */
+.card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 1rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.card h2 {
+  margin: 0 0 1rem;
+  font-size: 1.1rem;
+  color: #333;
+}
+
+/* Forms */
+.form-inline {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.form-inline input {
+  flex: 1;
+  min-width: 160px;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+}
+
+.form-inline button {
+  padding: 0.5rem 1rem;
+  background: #2d5a3d;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+}
+
+.form-inline button:hover:not(:disabled) {
+  background: #244a32;
+}
+
+.form-inline button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+/* Item list */
+.item-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.item-list li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.6rem 0;
+  border-bottom: 1px solid #eee;
+}
+
+.item-list li:last-child {
+  border-bottom: none;
+}
+
+.item-list li span {
+  flex: 1;
+  text-align: left;
+}
+
+/* Buttons */
+.btn-sm {
+  padding: 0.35rem 0.65rem;
+  font-size: 0.85rem;
+  border-radius: 6px;
+  border: none;
+}
+
+.btn-danger {
+  background: #c23d3d;
+  color: #fff;
+}
+
+.btn-danger:hover {
+  background: #a03333;
+}
+
+.btn-warning {
+  background: #c98a2e;
+  color: #fff;
+}
+
+.btn-warning:hover {
+  background: #a87325;
+}
+
+.btn-success {
+  background: #2d5a3d;
+  color: #fff;
+}
+
+.btn-success:hover {
+  background: #244a32;
+}
+
+.actions {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+/* Table */
+.table-card .table-wrap {
+  overflow-x: auto;
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.data-table th,
+.data-table td {
+  padding: 0.6rem 0.75rem;
+  text-align: left;
+  border-bottom: 1px solid #eee;
+}
+
+.data-table th {
+  font-weight: 600;
+  color: #444;
+  background: #f8f8f8;
+}
+
+.data-table tbody tr:hover {
+  background: #fafafa;
+}
+
+.badge {
+  display: inline-block;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  background: #e8e8e8;
+  color: #444;
+}
+
+/* Success */
+.success-msg {
+  padding: 0.75rem 1rem;
+  margin-bottom: 1rem;
+  background: #e8f5e9;
+  color: #2d5a3d;
+  border-radius: 8px;
+  font-size: 0.9rem;
+}
+
+/* Errors */
+.error-msg {
+  padding: 0.75rem 1rem;
+  margin-bottom: 1rem;
+  background: #fde8e8;
+  color: #b91c1c;
+  border-radius: 8px;
+  font-size: 0.9rem;
+}

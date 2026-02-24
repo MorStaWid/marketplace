@@ -1,0 +1,49 @@
+:root {
+  font-family: "DM Sans", system-ui, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+  color: #1a1a1a;
+  background-color: #f5f0eb;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+}
+
+a {
+  font-weight: 500;
+  color: #2d5a3d;
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: underline;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+input, select {
+  font-family: inherit;
+  font-size: 1rem;
+}
+
+.muted {
+  color: #6b6b6b;
+}
