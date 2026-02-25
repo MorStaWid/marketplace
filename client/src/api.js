@@ -9,6 +9,19 @@ function getToken() {
   return localStorage.getItem("token");                                             // Retrieve the JWT token from browser storage
 }
 
+/** Callback when server returns 401 (invalid/expired token). AuthContext sets this to clear token so user is redirected to login. */
+let onUnauthorized = null;
+export function setOnUnauthorized(fn) {
+  onUnauthorized = fn;
+}
+
+/** On 401: clear stored token, notify app, throw so caller can handle. */
+function handleUnauthorized() {
+  localStorage.removeItem("token");
+  if (typeof onUnauthorized === "function") onUnauthorized();
+  throw new Error("Session expired. Please log in again.");
+}
+
 export async function register({ username, email, password, role = "customer" }) {
   const res = await fetch(`${API_BASE}/auth/register`, {                            // POST request to register endpoint
     method: "POST",                                                                 // HTTP method for creating a new user
@@ -37,6 +50,7 @@ export async function getUserItems() {
     headers: { Authorization: `Bearer ${token}` },                                  // Send JWT in Authorization header
   });
   const data = await res.json();                                                    // Parse response JSON
+  if (res.status === 401) handleUnauthorized();                                      // Invalid/expired token: clear auth and redirect to login
   if (!res.ok) throw new Error(data.message || "Failed to load items");             // Throw on error status
   return data.data;                                                                 // Return the items array from response
 }
@@ -52,6 +66,7 @@ export async function addItem(name) {
     body: JSON.stringify({ name }),                                                 // Send item name in request body
   });
   const data = await res.json();                                                    // Parse response
+  if (res.status === 401) handleUnauthorized();                                      // Invalid/expired token: clear auth and redirect to login
   if (!res.ok) throw new Error(data.message || "Failed to add item");               // Throw on failure
   return data;                                                                      // Return response
 }
@@ -63,6 +78,7 @@ export async function deleteItem(id) {
     headers: { Authorization: `Bearer ${token}` },                                 // Auth header
   });
   const data = await res.json();                                                  // Parse response
+  if (res.status === 401) handleUnauthorized();                                    // Invalid/expired token: clear auth and redirect to login
   if (!res.ok) throw new Error(data.message || "Failed to delete item");          // Throw on error
   return data;                                                                    // Return response
 }
@@ -73,6 +89,7 @@ export async function getUsers() {
     headers: { Authorization: `Bearer ${token}` },                                // Auth header
   });
   const data = await res.json();                                                  // Parse response
+  if (res.status === 401) handleUnauthorized();                                    // Invalid/expired token: clear auth and redirect to login
   if (!res.ok) throw new Error(data.message || "Failed to load users");           // Throw on error
   return data.data;                                                               // Return users array from response
 }
@@ -85,6 +102,7 @@ export async function deleteUser(id) {
     headers: { Authorization: `Bearer ${token}` },                                // Auth header
   });
   const data = await res.json();                                                  // Parse response
+  if (res.status === 401) handleUnauthorized();                                    // Invalid/expired token: clear auth and redirect to login
   if (!res.ok) throw new Error(data.message || "Failed to delete user");          // Throw on error
   return data;                                                                    // Return response
 }
@@ -96,6 +114,7 @@ export async function blockUser(id) {
     headers: { Authorization: `Bearer ${token}` },                                // Auth header
   });
   const data = await res.json();                                                  // Parse response
+  if (res.status === 401) handleUnauthorized();                                    // Invalid/expired token: clear auth and redirect to login
   if (!res.ok) throw new Error(data.message || "Failed to block user");           // Throw on error
   return data;                                                                    // Return response
 }
@@ -107,6 +126,7 @@ export async function unblockUser(id) {
     headers: { Authorization: `Bearer ${token}` },                                // Auth header
   });
   const data = await res.json();                                                  // Parse response
+  if (res.status === 401) handleUnauthorized();                                    // Invalid/expired token: clear auth and redirect to login
   if (!res.ok) throw new Error(data.message || "Failed to unblock user");         // Throw on error
   return data;                                                                    // Return response
 }

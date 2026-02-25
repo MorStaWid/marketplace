@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";            //React Router allows navigation between different views without requiring a full page reload from the server | npm install react-router-dom
 import { AuthProvider, useAuth } from "./context/AuthContext";                        // Auth context provider and hook for login state and role
 import { ProtectedRoute } from "./components/ProtectedRoute";                         // Wrapper that redirects unauthenticated or non-admin users
+import { TokenExpiredModal } from "./components/TokenExpiredModal";                   // Freeze + card when token expires
 import Login from "./pages/Login";                                                  
 import Register from "./pages/Register";                                            
 import Dashboard from "./pages/Dashboard";                                           
@@ -24,6 +25,7 @@ function App() {
   return (
     <BrowserRouter>                                                 {/* Provides routing context for the app */}
       <AuthProvider>                                                {/* Wraps app so all children can access auth state and actions */}
+        <TokenExpiredModal />
         <Routes>                                                    {/* Container for route definitions */}
           <Route path="/" element={<HomeRedirect />} />             {/* Root path uses redirect component */}
           <Route path="/login" element={<Login />} />               {/* Login page route */}

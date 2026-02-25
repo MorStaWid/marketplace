@@ -41,6 +41,7 @@ export function AuthProvider({ children }) {
     const t = localStorage.getItem("token");                                  // Read token from storage for initial user
     return t ? parseToken(t) : null;                                          // Decode to get user payload or null
   });
+  const [tokenExpiredModal, setTokenExpiredModal] = useState(false);           // When true: freeze page and show "token expired" card; user clicks button to go to login
 
   useEffect(() => {
     if (token) {
@@ -51,6 +52,20 @@ export function AuthProvider({ children }) {
       setUser(null);                                                          // Clear user state
     }
   }, [token]);                                                                // Run when token state changes
+
+  // When the server returns 401 (invalid/expired token), show modal and freeze page; do not redirect until user clicks "Return to login"
+  useEffect(() => {
+    api.setOnUnauthorized(() => setTokenExpiredModal(true));
+    return () => api.setOnUnauthorized(null);
+  }, []);
+
+  // Token expires in 5 seconds (for testing). Uncomment to test; keep commented in production.
+  useEffect(() => {
+    if (!token) return;
+    const expiryMs = 5000;
+    const timer = setTimeout(() => setTokenExpiredModal(true), expiryMs);
+    return () => clearTimeout(timer);
+  }, [token]);
 
   const login = async (email, password) => {                                  // Login handler: call API and store token
     const data = await api.login({ email, password });                        // Send credentials to backend
@@ -64,13 +79,15 @@ export function AuthProvider({ children }) {
   const logout = () => setToken(null);                                        // Clear token to log out (effect will clear storage and user)
 
   const value = {
-    token,                                                                  
-    user,                        
-    isAdmin: user?.role === "admin",  
-    login,  
-    register,  
-    logout,  
-    isAuthenticated: !!token,  
+    token,
+    user,
+    isAdmin: user?.role === "admin",
+    login,
+    register,
+    logout,
+    isAuthenticated: !!token,
+    tokenExpiredModal,
+    clearTokenExpiredModal: () => setTokenExpiredModal(false),
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;  // Provide value to all descendants
