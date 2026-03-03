@@ -47,3 +47,4 @@ client/.cache/
 .parcel-cache
 .vercel
 .netlify
+db_backup_before_marketplace.sql
