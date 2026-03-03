@@ -59,13 +59,13 @@ export function AuthProvider({ children }) {
     return () => api.setOnUnauthorized(null);
   }, []);
 
-  // Token expires in 5 seconds (for testing). Uncomment to test; keep commented in production.
-  useEffect(() => {
-    if (!token) return;
-    const expiryMs = 5000;
-    const timer = setTimeout(() => setTokenExpiredModal(true), expiryMs);
-    return () => clearTimeout(timer);
-  }, [token]);
+  // // Token expires in 5 seconds (for testing). Uncomment to test; keep commented in production.
+  // useEffect(() => {
+  //   if (!token) return;
+  //   const expiryMs = 5000;
+  //   const timer = setTimeout(() => setTokenExpiredModal(true), expiryMs);
+  //   return () => clearTimeout(timer);
+  // }, [token]);
 
   const login = async (email, password) => {                                  // Login handler: call API and store token
     const data = await api.login({ email, password });                        // Send credentials to backend

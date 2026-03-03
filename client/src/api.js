@@ -22,6 +22,28 @@ function handleUnauthorized() {
   throw new Error("Session expired. Please log in again.");
 }
 
+async function authorizedRequest(path, options = {}) {
+  const token = getToken();
+  const headers = {
+    ...(options.headers || {}),
+    Authorization: `Bearer ${token}`,
+  };
+
+  const res = await fetch(`${API_BASE}${path}`, {
+    ...options,
+    headers,
+  });
+
+  const data = await res.json().catch(() => ({}));
+
+  if (res.status === 401) handleUnauthorized();
+  if (!res.ok) {
+    throw new Error(data.message || "Request failed");
+  }
+
+  return data;
+}
+
 export async function register({ username, email, password, role = "customer" }) {
   const res = await fetch(`${API_BASE}/auth/register`, {                            // POST request to register endpoint
     method: "POST",                                                                 // HTTP method for creating a new user
@@ -45,88 +67,115 @@ export async function login({ email, password }) {
 }
 
 export async function getUserItems() {
-  const token = getToken();                                                         // Get JWT for Authorization header
-  const res = await fetch(`${API_BASE}/user/items`, {                               // GET request to user items endpoint
-    headers: { Authorization: `Bearer ${token}` },                                  // Send JWT in Authorization header
-  });
-  const data = await res.json();                                                    // Parse response JSON
-  if (res.status === 401) handleUnauthorized();                                      // Invalid/expired token: clear auth and redirect to login
-  if (!res.ok) throw new Error(data.message || "Failed to load items");             // Throw on error status
+  const data = await authorizedRequest("/user/items");                              // GET user items with auth helper
   return data.data;                                                                 // Return the items array from response
 }
 
 export async function addItem(name) {
-  const token = getToken();                                                         // Get auth token for the request
-  const res = await fetch(`${API_BASE}/user/add_item`, {                            // POST to add_item endpoint
-    method: "POST",                                                                 // HTTP method for creating resource
-    headers: {
-      "Content-Type": "application/json",                                           // JSON body
-      Authorization: `Bearer ${token}`,                                             // Auth header
-    },
-    body: JSON.stringify({ name }),                                                 // Send item name in request body
+  return authorizedRequest("/user/add_item", {                                      // POST to add_item endpoint with auth helper
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ name }),
   });
-  const data = await res.json();                                                    // Parse response
-  if (res.status === 401) handleUnauthorized();                                      // Invalid/expired token: clear auth and redirect to login
-  if (!res.ok) throw new Error(data.message || "Failed to add item");               // Throw on failure
-  return data;                                                                      // Return response
 }
 
 export async function deleteItem(id) {
-  const token = getToken();                                                        // Get JWT for auth
-  const res = await fetch(`${API_BASE}/user/delete_item/${id}`, {                  // DELETE request with item id in URL
-    method: "DELETE",                                                              // HTTP method for deletion
-    headers: { Authorization: `Bearer ${token}` },                                 // Auth header
+  return authorizedRequest(`/user/delete_item/${id}`, {                             // DELETE item with auth helper
+    method: "DELETE",
   });
-  const data = await res.json();                                                  // Parse response
-  if (res.status === 401) handleUnauthorized();                                    // Invalid/expired token: clear auth and redirect to login
-  if (!res.ok) throw new Error(data.message || "Failed to delete item");          // Throw on error
-  return data;                                                                    // Return response
 }
 
 export async function getUsers() {
-  const token = getToken();                                                       // Get admin/user token
-  const res = await fetch(`${API_BASE}/admin/get_user`, {                         // GET all users (admin)
-    headers: { Authorization: `Bearer ${token}` },                                // Auth header
-  });
-  const data = await res.json();                                                  // Parse response
-  if (res.status === 401) handleUnauthorized();                                    // Invalid/expired token: clear auth and redirect to login
-  if (!res.ok) throw new Error(data.message || "Failed to load users");           // Throw on error
-  return data.data;                                                               // Return users array from response
+  const data = await authorizedRequest("/admin/get_user");                          // GET all users (admin) with auth helper
+  return data.data;                                                                 // Return users array from response
 }
 
 
 export async function deleteUser(id) {
-  const token = getToken();                                                       // Get auth token
-  const res = await fetch(`${API_BASE}/admin/delete_user/${id}`, {                // DELETE user by id in URL
-    method: "DELETE",                                                             // HTTP method
-    headers: { Authorization: `Bearer ${token}` },                                // Auth header
+  return authorizedRequest(`/admin/delete_user/${id}`, {                            // DELETE user by id with auth helper
+    method: "DELETE",
   });
-  const data = await res.json();                                                  // Parse response
-  if (res.status === 401) handleUnauthorized();                                    // Invalid/expired token: clear auth and redirect to login
-  if (!res.ok) throw new Error(data.message || "Failed to delete user");          // Throw on error
-  return data;                                                                    // Return response
 }
 
 export async function blockUser(id) {
-  const token = getToken();                                                       // Get auth token
-  const res = await fetch(`${API_BASE}/admin/block_user/${id}`, {                 // PATCH to block user
-    method: "PATCH",                                                              // HTTP method for partial update
-    headers: { Authorization: `Bearer ${token}` },                                // Auth header
+  return authorizedRequest(`/admin/block_user/${id}`, {                             // PATCH to block user with auth helper
+    method: "PATCH",
   });
-  const data = await res.json();                                                  // Parse response
-  if (res.status === 401) handleUnauthorized();                                    // Invalid/expired token: clear auth and redirect to login
-  if (!res.ok) throw new Error(data.message || "Failed to block user");           // Throw on error
-  return data;                                                                    // Return response
 }
 
 export async function unblockUser(id) {
-  const token = getToken();                                                       // Get auth token
-  const res = await fetch(`${API_BASE}/admin/unblock_user/${id}`, {               // PATCH to unblock user
-    method: "PATCH",                                                              // HTTP method for partial update
-    headers: { Authorization: `Bearer ${token}` },                                // Auth header
+  return authorizedRequest(`/admin/unblock_user/${id}`, {                           // PATCH to unblock user with auth helper
+    method: "PATCH",
   });
-  const data = await res.json();                                                  // Parse response
-  if (res.status === 401) handleUnauthorized();                                    // Invalid/expired token: clear auth and redirect to login
-  if (!res.ok) throw new Error(data.message || "Failed to unblock user");         // Throw on error
-  return data;                                                                    // Return response
+}
+
+// Listings
+export async function getListings() {
+  const res = await fetch(`${API_BASE}/listings`);                                  // Public listings browse
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.message || "Failed to load listings");
+  return data.data;
+}
+
+export async function createListing({ title, description, priceCents, quantityAvailable }) {
+  const data = await authorizedRequest("/listings", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ title, description, priceCents, quantityAvailable }),
+  });
+  return data.data;
+}
+
+export async function getMyListings() {
+  const data = await authorizedRequest("/listings/mine");
+  return data.data;
+}
+
+// Cart
+export async function getCart() {
+  const data = await authorizedRequest("/cart");
+  return data.data;
+}
+
+export async function addToCart({ listingId, quantity }) {
+  const data = await authorizedRequest("/cart/items", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ listingId, quantity }),
+  });
+  return data.data;
+}
+
+export async function updateCartItem(id, quantity) {
+  const data = await authorizedRequest(`/cart/items/${id}`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ quantity }),
+  });
+  return data.data;
+}
+
+export async function removeCartItem(id) {
+  const data = await authorizedRequest(`/cart/items/${id}`, {
+    method: "DELETE",
+  });
+  return data.data;
+}
+
+// Orders & payments
+export async function checkout() {
+  const data = await authorizedRequest("/orders/checkout", {
+    method: "POST",
+  });
+  return data.data;
+}
+
+export async function getBuyerOrders() {
+  const data = await authorizedRequest("/orders/buyer");
+  return data.data;
+}
+
+export async function getSellerOrders() {
+  const data = await authorizedRequest("/orders/seller");
+  return data.data;
 }
